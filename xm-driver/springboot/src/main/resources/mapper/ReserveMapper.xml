@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.ReserveMapper">
+
+    <sql id="Base_Column_List">
+        id,user_id,course_id,time,status,comment,start
+    </sql>
+
+    <select id="selectAll" resultType="com.example.entity.Reserve">
+        select
+        reserve.*, user.name as userName, course.name as courseName
+        from reserve
+        left join user on reserve.user_id = user.id
+        left join course on reserve.course_id = course.id
+        <where>
+            <if test="userId != null"> and reserve.user_id = #{userId}</if>
+            <if test="courseName != null"> and course.name like concat('%', #{courseName}, '%')</if>
+        </where>
+        order by reserve.id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.Reserve">
+        select
+        <include refid="Base_Column_List" />
+        from reserve
+        where id = #{id}
+    </select>
+
+    <select id="selectUser" resultType="com.example.entity.Reserve">
+        select reserve.*, course.name as courseName, course.time as courseTime, course.location as courseLocation,
+        coach.name as coachName
+        from reserve
+        left join course on reserve.course_id = course.id
+        left join coach on course.coach_id = coach.id
+        where reserve.user_id = #{userId} and reserve.status = '通过'
+    </select>
+
+    <delete id="deleteById">
+        delete from reserve
+        where  id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Reserve" useGeneratedKeys="true" keyProperty="id">
+        insert into reserve
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="time != null">time,</if>
+            <if test="status != null">status,</if>
+            <if test="comment != null">comment,</if>
+            <if test="start != null">start,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="time != null">#{time},</if>
+            <if test="status != null">#{status},</if>
+            <if test="comment != null">#{comment},</if>
+            <if test="start != null">#{start},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Reserve">
+        update reserve
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="courseId != null">
+                course_id = #{courseId},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="comment != null">
+                comment = #{comment},
+            </if>
+            <if test="start != null">
+                start = #{start},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

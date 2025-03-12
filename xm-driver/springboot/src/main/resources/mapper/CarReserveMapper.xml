@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CarReserveMapper">
+
+    <sql id="Base_Column_List">
+        id,user_id,car_id,time,status,comment,return_status,use_date
+    </sql>
+
+    <select id="selectAll" resultType="com.example.entity.CarReserve">
+        select
+        car_reserve.*, user.name as userName, car.name as carName
+        from car_reserve
+        left join user on car_reserve.user_id = user.id
+        left join car on car_reserve.car_id = car.id
+        <where>
+            <if test="userId != null">and car_reserve.user_id = #{userId}</if>
+            <if test="carName != null"> and car.name like concat('%', #{carName}, '%')</if>
+        </where>
+        order by car_reserve.id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.CarReserve">
+        select
+        <include refid="Base_Column_List" />
+        from car_reserve
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        delete from car_reserve
+        where  id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.CarReserve" useGeneratedKeys="true" keyProperty="id">
+        insert into car_reserve
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="carId != null">car_id,</if>
+            <if test="time != null">time,</if>
+            <if test="status != null">status,</if>
+            <if test="comment != null">comment,</if>
+            <if test="returnStatus != null">return_status,</if>
+            <if test="useDate != null">use_date,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="carId != null">#{carId},</if>
+            <if test="time != null">#{time},</if>
+            <if test="status != null">#{status},</if>
+            <if test="comment != null">#{comment},</if>
+            <if test="returnStatus != null">#{returnStatus},</if>
+            <if test="useDate != null">#{useDate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.CarReserve">
+        update car_reserve
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="carId != null">
+                car_id = #{carId},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="comment != null">
+                comment = #{comment},
+            </if>
+            <if test="returnStatus != null">
+                return_status = #{returnStatus},
+            </if>
+            <if test="useDate != null">
+                use_date = #{useDate},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

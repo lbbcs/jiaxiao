@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CourseMapper">
+
+    <sql id="Base_Column_List">
+        id,name,descr,type,during,time,location,coach_id,max,status,listing
+    </sql>
+
+    <select id="selectAll" resultType="com.example.entity.Course">
+        select
+        course.*, coach.name as coachName
+        from course
+        left join coach on course.coach_id = coach.id
+        <where>
+            <if test="name != null"> and course.name like concat('%', #{name}, '%')</if>
+            <if test="listing != null"> and course.listing = #{listing}</if>
+        </where>
+        order by course.id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.Course">
+        select
+        <include refid="Base_Column_List" />
+        from course
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        delete from course
+        where  id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Course" useGeneratedKeys="true" keyProperty="id">
+        insert into course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="descr != null">descr,</if>
+            <if test="type != null">type,</if>
+            <if test="during != null">during,</if>
+            <if test="time != null">time,</if>
+            <if test="location != null">location,</if>
+            <if test="coachId != null">coach_id,</if>
+            <if test="max != null">max,</if>
+            <if test="status != null">status,</if>
+            <if test="listing != null">listing,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="descr != null">#{descr},</if>
+            <if test="type != null">#{type},</if>
+            <if test="during != null">#{during},</if>
+            <if test="time != null">#{time},</if>
+            <if test="location != null">#{location},</if>
+            <if test="coachId != null">#{coachId},</if>
+            <if test="max != null">#{max},</if>
+            <if test="status != null">#{status},</if>
+            <if test="listing != null">#{listing},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Course">
+        update course
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="descr != null">
+                descr = #{descr},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="during != null">
+                during = #{during},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="location != null">
+                location = #{location},
+            </if>
+            <if test="coachId != null">
+                coach_id = #{coachId},
+            </if>
+            <if test="max != null">
+                max = #{max},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="listing != null">
+                listing = #{listing},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>
